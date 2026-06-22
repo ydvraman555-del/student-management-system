@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- 1. PAGE HEADER -->
+<!-- ============================================================ -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">📊 Dashboard</h2>
+    <div class="text-muted">
+        <i class="bi bi-calendar3 me-1"></i>
+        {{ now.strftime('%d %B %Y') if now else '' }}
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 2. STAT CARDS ROW -->
+<!-- ============================================================ -->
+<div class="row g-4 mb-4">
+
+    <!-- Card 1 - Total Students -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm stat-card bg-primary text-white">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fs-1 fw-bold">{{ total_students }}</div>
+                    <div class="fw-semibold fs-6">Total Students</div>
+                    <small class="opacity-75">All registered students</small>
+                </div>
+                <div>
+                    <i class="bi bi-people-fill display-5 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 - Total Subjects -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm stat-card bg-success text-white">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fs-1 fw-bold">{{ total_subjects }}</div>
+                    <div class="fw-semibold fs-6">Total Subjects</div>
+                    <small class="opacity-75">Available subjects</small>
+                </div>
+                <div>
+                    <i class="bi bi-book-fill display-5 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 - Total Present -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm stat-card bg-info text-white">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fs-1 fw-bold">{{ total_present }}</div>
+                    <div class="fw-semibold fs-6">Total Present</div>
+                    <small class="opacity-75">Attendance records</small>
+                </div>
+                <div>
+                    <i class="bi bi-check-circle-fill display-5 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4 - Total Absent -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm stat-card bg-danger text-white">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fs-1 fw-bold">{{ total_absent }}</div>
+                    <div class="fw-semibold fs-6">Total Absent</div>
+                    <small class="opacity-75">Absence records</small>
+                </div>
+                <div>
+                    <i class="bi bi-x-circle-fill display-5 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 3. CHARTS ROW -->
+<!-- ============================================================ -->
+<div class="row g-4 mb-4">
+
+    <!-- Chart 1 - Subject Bar Chart -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header fw-bold bg-white border-bottom">
+                📊 Subject wise Average Marks
+            </div>
+            <div class="card-body">
+                <canvas id="subjectChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 2 - Grade Pie Chart -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header fw-bold bg-white border-bottom">
+                🎯 Grade Distribution
+            </div>
+            <div class="card-body">
+                <canvas id="gradeChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 3 - Class Doughnut Chart -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header fw-bold bg-white border-bottom">
+                🏫 Class Distribution
+            </div>
+            <div class="card-body">
+                <canvas id="classChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 4. BOTTOM ROW -->
+<!-- ============================================================ -->
+<div class="row g-4">
+
+    <!-- Top 5 Students Table -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                <span class="fw-bold">🏆 Top 5 Students</span>
+                <a href="{{ url_for('reports') }}" class="btn btn-sm btn-outline-primary">
+                    View All Reports →
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Total Marks</th>
+                                <th>Average</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in top_students %}
+                            <tr>
+                                <td class="fw-bold">
+                                    {% if loop.index == 1 %}🥇
+                                    {% elif loop.index == 2 %}🥈
+                                    {% elif loop.index == 3 %}🥉
+                                    {% else %}{{ loop.index }}
+                                    {% endif %}
+                                </td>
+                                <td class="fw-semibold">{{ s.name }}</td>
+                                <td>{{ s.total_marks }}</td>
+                                <td>{{ s.avg_marks }}</td>
+                                <td>
+                                    {% if s.grade == 'Excellent' %}
+                                        <span class="badge bg-success">Excellent</span>
+                                    {% elif s.grade == 'Good' %}
+                                        <span class="badge bg-primary">Good</span>
+                                    {% elif s.grade == 'Average' %}
+                                        <span class="badge bg-warning text-dark">Average</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Fail</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header fw-bold bg-white border-bottom">
+                ⚡ Quick Actions
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Student
+                    </a>
+
+                    <a href="{{ url_for('marks') }}" class="btn btn-success btn-lg">
+                        <i class="bi bi-journal-check me-2"></i>View Marks
+                    </a>
+
+                    <a href="{{ url_for('attendance') }}" class="btn btn-info btn-lg text-white">
+                        <i class="bi bi-calendar-check me-2"></i>Mark Attendance
+                    </a>
+
+                    <a href="{{ url_for('audit') }}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-shield-check me-2"></i>View Audit Log
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+<!-- ============================================================ -->
+<!-- 5. SCRIPTS BLOCK - CHARTS -->
+<!-- ============================================================ -->
+{% block scripts %}
+<script>
+
+    // ── Chart 1: Subject Bar Chart ────────────────────────────────
+    const subjectLabels = {{ subject_data | map(attribute='subject_name') | list | tojson }};
+    const subjectMarks  = {{ subject_data | map(attribute='avg_marks')    | list | tojson }};
+
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar',
+        data: {
+            labels: subjectLabels,
+            datasets: [{
+                label: 'Average Marks',
+                data: subjectMarks,
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+                borderRadius: 8,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    });
+
+
+    // ── Chart 2: Grade Pie Chart ──────────────────────────────────
+    const gradeLabels = {{ grade_data | map(attribute='grade') | list | tojson }};
+    const gradeCounts = {{ grade_data | map(attribute='cnt')   | list | tojson }};
+
+    new Chart(document.getElementById('gradeChart'), {
+        type: 'pie',
+        data: {
+            labels: gradeLabels,
+            datasets: [{
+                data: gradeCounts,
+                backgroundColor: ['#1cc88a', '#4e73df', '#f6c23e', '#e74a3b'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 10 }
+                }
+            }
+        }
+    });
+
+
+    // ── Chart 3: Class Horizontal Bar Chart ──────────────────────
+    const classLabels = {{ class_data | map(attribute='class') | list | tojson }};
+    const classCounts = {{ class_data | map(attribute='cnt')   | list | tojson }};
+
+    new Chart(document.getElementById('classChart'), {
+        type: 'bar',
+        data: {
+            labels: classLabels,
+            datasets: [{
+                label: 'Students',
+                data: classCounts,
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#fd7e14', '#20c997', '#d9534f'],
+                borderRadius: 4,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Makes it horizontal
+            responsive: true,
+            plugins: {
+                legend: { display: false } // No legend needed, labels are on Y-axis
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+</script>
+{% endblock %}

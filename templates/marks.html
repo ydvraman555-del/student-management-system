@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- 1. PAGE HEADER -->
+<!-- ============================================================ -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">📝 Student Marks</h2>
+        <p class="text-muted mb-0">Showing marks from INNER JOIN of students + marks + subjects tables</p>
+    </div>
+    <div>
+        <span class="badge bg-primary fs-6">Total Records: {{ total_records }}</span>
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 2. MARKS LEGEND ROW -->
+<!-- ============================================================ -->
+<div class="row mb-3">
+    <div class="col-auto">
+        <span class="badge bg-success px-3 py-2">🟢 Excellent: 80 - 100</span>
+    </div>
+    <div class="col-auto">
+        <span class="badge bg-primary px-3 py-2">🔵 Good: 60 - 79</span>
+    </div>
+    <div class="col-auto">
+        <span class="badge bg-warning text-dark px-3 py-2">🟡 Average: 40 - 59</span>
+    </div>
+    <div class="col-auto">
+        <span class="badge bg-danger px-3 py-2">🔴 Poor: Below 40</span>
+    </div>
+</div>
+
+
+<form method="GET" action="{{ url_for('marks') }}" class="row mb-3 g-2">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="🔍 Search student or subject..." value="{{ search }}">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Search</button>
+    </div>
+    {% if search %}
+    <div class="col-auto">
+        <a href="{{ url_for('marks') }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+    {% endif %}
+</form>
+
+
+<!-- ============================================================ -->
+<!-- 4. MARKS TABLE CARD -->
+<!-- ============================================================ -->
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-bold">📊 Marks Details (INNER JOIN)</span>
+            <small class="text-muted">students ⟶ marks ⟶ subjects</small>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0" id="marksTable">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Student Name</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Out of</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Exam Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for i, m in enumerate(marks) %}
+                    <tr>
+                        <!-- Serial -->
+                        <td class="text-muted">{{ (page - 1) * per_page + i + 1 }}</td>
+
+                        <!-- Student Name with Avatar -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar-circle-sm me-2">
+                                    {{ m.name[0].upper() }}
+                                </span>
+                                <span class="fw-semibold">{{ m.name }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Subject -->
+                        <td>
+                            <span class="badge bg-light text-dark border fs-6">
+                                {{ m.subject_name }}
+                            </span>
+                        </td>
+
+                        <!-- Marks with Color -->
+                        <td>
+                            {% if m.marks >= 80 %}
+                                <span class="fw-bold text-success fs-5">{{ m.marks }}</span>
+                            {% elif m.marks >= 60 %}
+                                <span class="fw-bold text-primary fs-5">{{ m.marks }}</span>
+                            {% elif m.marks >= 40 %}
+                                <span class="fw-bold text-warning fs-5">{{ m.marks }}</span>
+                            {% else %}
+                                <span class="fw-bold text-danger fs-5">{{ m.marks }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Out of -->
+                        <td class="text-muted">100</td>
+
+                        <!-- Percentage + Progress Bar -->
+                        <td style="min-width: 130px;">
+                            <div class="mb-1 small fw-semibold">{{ m.marks }}%</div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar
+                                    {% if m.marks >= 80 %}bg-success
+                                    {% elif m.marks >= 60 %}bg-primary
+                                    {% elif m.marks >= 40 %}bg-warning
+                                    {% else %}bg-danger{% endif %}"
+                                     role="progressbar"
+                                     style="width: {{ m.marks }}%;"
+                                     aria-valuenow="{{ m.marks }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Grade Badge -->
+                        <td>
+                            {% if m.marks >= 80 %}
+                                <span class="badge bg-success">Excellent</span>
+                            {% elif m.marks >= 60 %}
+                                <span class="badge bg-primary">Good</span>
+                            {% elif m.marks >= 40 %}
+                                <span class="badge bg-warning text-dark">Average</span>
+                            {% else %}
+                                <span class="badge bg-danger">Fail</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Exam Date -->
+                        <td>{{ m.exam_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination Footer -->
+    <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+        <div class="text-muted small">
+            Showing page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> (Total: <strong>{{ total_records }}</strong> records)
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+                {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('marks', page=page-1, search=search) }}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+                
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                        <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                    {% elif p <= 3 or p >= total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('marks', page=p, search=search) }}">{{ p }}</a></li>
+                    {% elif p == 4 or p == total_pages - 3 %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page < total_pages %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('marks', page=page+1, search=search) }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 5. SUMMARY CARDS BELOW TABLE -->
+<!-- ============================================================ -->
+<div class="row g-3 mt-3">
+
+    <!-- Card 1 - Highest Marks -->
+    <div class="col-md-3">
+        <div class="card border-0 bg-success bg-opacity-10 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-trophy-fill text-success display-4"></i>
+                <h3 class="text-success fw-bold mt-2">
+                    {% if marks %}{{ marks | map(attribute='marks') | max }}{% else %}—{% endif %}
+                </h3>
+                <p class="text-muted mb-0">Highest Marks</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 - Lowest Marks -->
+    <div class="col-md-3">
+        <div class="card border-0 bg-danger bg-opacity-10 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-arrow-down-circle text-danger display-4"></i>
+                <h3 class="text-danger fw-bold mt-2">
+                    {% if marks %}{{ marks | map(attribute='marks') | min }}{% else %}—{% endif %}
+                </h3>
+                <p class="text-muted mb-0">Lowest Marks</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 - Total Exams -->
+    <div class="col-md-3">
+        <div class="card border-0 bg-primary bg-opacity-10 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-journal text-primary display-4"></i>
+                <h3 class="text-primary fw-bold mt-2">{{ total_records }}</h3>
+                <p class="text-muted mb-0">Total Records</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4 - Subjects -->
+    <div class="col-md-3">
+        <div class="card border-0 bg-warning bg-opacity-10 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-book text-warning display-4"></i>
+                <h3 class="text-warning fw-bold mt-2">4</h3>
+                <p class="text-muted mb-1">View Subjects</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-warning">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+<!-- ============================================================ -->
+<!-- 6. SCRIPTS BLOCK -->
+<!-- ============================================================ -->
+{% block scripts %}
+<script>
+    // Server-side search implemented
+</script>
+{% endblock %}

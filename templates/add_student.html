@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- 1. PAGE HEADER -->
+<!-- ============================================================ -->
+<div class="mb-3">
+    {% if student %}
+        <h2 class="fw-bold mb-0">✏️ Edit Student</h2>
+        <p class="text-muted">Update student information</p>
+    {% else %}
+        <h2 class="fw-bold mb-0">➕ Add New Student</h2>
+        <p class="text-muted">Fill in the details below</p>
+    {% endif %}
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 2. BREADCRUMB -->
+<!-- ============================================================ -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('dashboard') }}" class="text-decoration-none">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('students') }}" class="text-decoration-none">Students</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if student %}Edit Student{% else %}Add Student{% endif %}
+        </li>
+    </ol>
+</nav>
+
+
+<!-- ============================================================ -->
+<!-- 3. FORM CARD + SIDE INFO CARD -->
+<!-- ============================================================ -->
+<div class="row justify-content-center">
+
+    <!-- FORM CARD -->
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-primary text-white fw-bold">
+                {% if student %}
+                    ✏️ Edit Student Information
+                {% else %}
+                    ➕ New Student Registration
+                {% endif %}
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST"
+                      action="{% if student %}{{ url_for('update_student', sid=student.student_id) }}{% else %}{{ url_for('add_student') }}{% endif %}">
+
+                    <div class="row g-3">
+
+                        <!-- Field 1: Name -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            <input type="text"
+                                   name="name"
+                                   class="form-control"
+                                   placeholder="Enter full name"
+                                   required
+                                   value="{% if student %}{{ student.name }}{% endif %}">
+                        </div>
+
+                        <!-- Field 2: Email -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email Address *</label>
+                            <input type="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="Enter email"
+                                   required
+                                   value="{% if student %}{{ student.email }}{% endif %}"
+                                   {% if student %}readonly{% endif %}>
+                            {% if student %}
+                                <div class="form-text text-warning">
+                                    <i class="bi bi-lock-fill"></i> Email cannot be changed
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Field 3: Phone -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel"
+                                   name="phone"
+                                   class="form-control"
+                                   placeholder="Enter 10 digit phone"
+                                   maxlength="15"
+                                   value="{% if student %}{{ student.phone }}{% endif %}">
+                        </div>
+
+                        <!-- Field 4: Class -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Class *</label>
+                            <select name="cls" class="form-select" required>
+                                <option value="" disabled {% if not student %}selected{% endif %}>
+                                    Select Class
+                                </option>
+                                {% for cls_opt in ['10A','10B','10C','11A','11B','11C','12A','12B','12C'] %}
+                                <option value="{{ cls_opt }}"
+                                    {% if student and student.class == cls_opt %}selected{% endif %}>
+                                    {{ cls_opt }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Field 5: Age -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Age *</label>
+                            <input type="number"
+                                   name="age"
+                                   class="form-control"
+                                   min="5"
+                                   max="30"
+                                   placeholder="Age"
+                                   required
+                                   value="{% if student %}{{ student.age }}{% endif %}">
+                        </div>
+
+                    </div>
+
+                    <!-- Submit + Cancel Buttons -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            {% if student %}
+                                <i class="bi bi-pencil-fill me-2"></i>✏️ Update Student
+                            {% else %}
+                                <i class="bi bi-plus-circle me-2"></i>➕ Add Student
+                            {% endif %}
+                        </button>
+                        <a href="{{ url_for('students') }}" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDE INFO CARD -->
+    <div class="col-md-4">
+
+        <!-- Card 1: Instructions -->
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-info text-white fw-bold">
+                📋 Instructions
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">✅ Name is required</li>
+                    <li class="mb-2">✅ Email must be unique</li>
+                    <li class="mb-2">✅ Age must be 5 to 30</li>
+                    <li class="mb-2">✅ Class must be selected</li>
+                    <li class="mb-0 text-warning fw-semibold">
+                        ⚠️ Email cannot be changed after registration
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 2: Quick Info -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-success text-white fw-bold">
+                📊 Quick Info
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">Total Students registered</p>
+                <a href="{{ url_for('students') }}" class="btn btn-outline-success btn-sm">
+                    View all students →
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

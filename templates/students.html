@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- 1. PAGE HEADER -->
+<!-- ============================================================ -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">👨‍🎓 Students</h2>
+        <p class="text-muted mb-0">Total: {{ total_records }} students registered</p>
+    </div>
+    <div>
+        <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Student
+        </a>
+    </div>
+</div>
+
+
+<form method="GET" action="{{ url_for('students') }}" class="row mb-3 g-2">
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="🔍 Search by name, email, class..." value="{{ search }}">
+            <button type="submit" class="btn btn-secondary">Search</button>
+            {% if search %}
+                <a href="{{ url_for('students') }}" class="btn btn-outline-secondary">Clear</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+
+<!-- ============================================================ -->
+<!-- 3. STUDENTS TABLE CARD -->
+<!-- ============================================================ -->
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle" id="studentTable">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Class</th>
+                        <th>Age</th>
+                        <th>Admission Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <!-- ID -->
+                        <td class="text-muted">#{{ s.student_id }}</td>
+
+                        <!-- Name with Avatar -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar-circle me-2">
+                                    {{ s.name[0].upper() }}
+                                </span>
+                                <span class="fw-semibold">{{ s.name }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Email -->
+                        <td>
+                            <a href="mailto:{{ s.email }}" class="text-decoration-none">
+                                {{ s.email }}
+                            </a>
+                        </td>
+
+                        <!-- Phone -->
+                        <td>{{ s.phone }}</td>
+
+                        <!-- Class Badge -->
+                        <td>
+                            <span class="badge bg-info text-dark">{{ s.class }}</span>
+                        </td>
+
+                        <!-- Age -->
+                        <td>{{ s.age }}</td>
+
+                        <!-- Admission Date -->
+                        <td>{{ s.admission_date }}</td>
+
+                        <!-- Status Badge -->
+                        <td>
+                            {% if s.status == 'Active' %}
+                                <span class="badge bg-success">✅ Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <a href="{{ url_for('update_student', sid=s.student_id) }}"
+                               class="btn btn-sm btn-warning me-1"
+                               title="Edit Student"
+                               data-bs-toggle="tooltip">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a href="{{ url_for('delete_student', sid=s.student_id) }}"
+                               class="btn btn-sm btn-danger"
+                               title="Delete Student"
+                               data-bs-toggle="tooltip"
+                               onclick="return confirm('Are you sure you want to delete {{ s.name }}?')">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    <!-- 4. IF NO STUDENTS -->
+                    {% if not students %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4">
+                            <div>
+                                <i class="bi bi-inbox display-4 text-muted"></i>
+                                <p class="text-muted mt-2">No students found</p>
+                                <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+                                    Add First Student
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination Footer -->
+    <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+        <div class="text-muted small">
+            Showing page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> (Total: <strong>{{ total_records }}</strong> records)
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+                {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('students', page=page-1, search=search) }}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+                
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                        <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                    {% elif p <= 3 or p >= total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('students', page=p, search=search) }}">{{ p }}</a></li>
+                    {% elif p == 4 or p == total_pages - 3 %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page < total_pages %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('students', page=page+1, search=search) }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    // Script 1 - Bootstrap Tooltips
+    var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(function (el) {
+        new bootstrap.Tooltip(el);
+    });
+</script>
+{% endblock %}

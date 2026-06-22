@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- 1. PAGE HEADER -->
+<!-- ============================================================ -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">📈 Reports</h2>
+        <p class="text-muted mb-0">All SQL concepts used in one place</p>
+    </div>
+    <div class="d-flex gap-2">
+        <span class="badge bg-primary fs-6">CTE</span>
+        <span class="badge bg-success fs-6">Window Functions</span>
+        <span class="badge bg-warning text-dark fs-6">Views</span>
+        <span class="badge bg-info fs-6">Subquery</span>
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 2. SQL CONCEPTS INFO CARDS -->
+<!-- ============================================================ -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-primary fw-bold">👁️ VIEW</h6>
+                <small class="text-muted">vw_student_performance</small>
+                <p class="mb-0 small mt-1">Shows total marks, avg and grade for each student</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-success fw-bold">🔢 WINDOW FUNCTIONS</h6>
+                <small class="text-muted">RANK, DENSE_RANK, ROW_NUMBER</small>
+                <p class="mb-0 small mt-1">Ranks students based on their total marks</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm border-start border-warning border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-warning fw-bold">📋 CTE</h6>
+                <small class="text-muted">WITH top_students AS (...)</small>
+                <p class="mb-0 small mt-1">Common Table Expression to find top performing students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm border-start border-info border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-info fw-bold">🔍 SUBQUERY</h6>
+                <small class="text-muted">SELECT IN (SELECT ...)</small>
+                <p class="mb-0 small mt-1">Nested query to find students above average marks</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 3. NAV TABS -->
+<!-- ============================================================ -->
+<ul class="nav nav-tabs nav-fill mb-4" id="reportTabs">
+    <li class="nav-item">
+        <a class="nav-link active" id="performance-tab"
+           data-bs-toggle="tab" data-bs-target="#performance"
+           href="#">
+            <i class="bi bi-graph-up me-2"></i>Performance (VIEW)
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="ranking-tab"
+           data-bs-toggle="tab" data-bs-target="#ranking"
+           href="#">
+            <i class="bi bi-trophy me-2"></i>Ranking (Window Fn)
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="cte-tab"
+           data-bs-toggle="tab" data-bs-target="#cte"
+           href="#">
+            <i class="bi bi-star me-2"></i>Top Students (CTE)
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="subquery-tab"
+           data-bs-toggle="tab" data-bs-target="#subquery"
+           href="#">
+            <i class="bi bi-search me-2"></i>Above Average (Subquery)
+        </a>
+    </li>
+</ul>
+
+
+<!-- ============================================================ -->
+<!-- 4. TAB CONTENT -->
+<!-- ============================================================ -->
+<div class="tab-content">
+
+    <!-- ── TAB 1: PERFORMANCE ──────────────────────────────────── -->
+    <div class="tab-pane fade show active" id="performance">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">📊 Student Performance</span>
+                    <small class="text-muted">Source: vw_student_performance (VIEW)</small>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Total Marks</th>
+                                <th>Average</th>
+                                <th>Grade</th>
+                                <th>Performance Bar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i, p in enumerate(performance) %}
+                            <tr>
+                                <td class="text-muted">{{ i + 1 }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="avatar-circle-sm me-2">{{ p.name[0].upper() }}</span>
+                                        <span class="fw-semibold">{{ p.name }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-info text-dark">{{ p.class }}</span></td>
+                                <td>
+                                    <span class="fw-bold fs-5">{{ p.total_marks }}</span>
+                                    <small class="text-muted"> /400</small>
+                                </td>
+                                <td>{{ p.avg_marks }}</td>
+                                <td>
+                                    {% if p.grade == 'Excellent' %}
+                                        <span class="badge bg-success">Excellent</span>
+                                    {% elif p.grade == 'Good' %}
+                                        <span class="badge bg-primary">Good</span>
+                                    {% elif p.grade == 'Average' %}
+                                        <span class="badge bg-warning text-dark">Average</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Fail</span>
+                                    {% endif %}
+                                </td>
+                                <td style="min-width: 160px;">
+                                    <div class="progress" style="height: 12px;">
+                                        <div class="progress-bar
+                                            {% if p.avg_marks >= 80 %}bg-success
+                                            {% elif p.avg_marks >= 60 %}bg-primary
+                                            {% elif p.avg_marks >= 40 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ p.avg_marks }}%;"
+                                             aria-valuenow="{{ p.avg_marks }}"
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            {{ p.avg_marks }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ── TAB 2: RANKING ──────────────────────────────────────── -->
+    <div class="tab-pane fade" id="ranking">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">🏆 Student Ranking</span>
+                    <small class="text-muted">Using RANK() DENSE_RANK() ROW_NUMBER()</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT name, total_marks,
+    RANK()       OVER (ORDER BY total_marks DESC) AS rnk,
+    DENSE_RANK() OVER (ORDER BY total_marks DESC) AS dense_rnk,
+    ROW_NUMBER() OVER (ORDER BY total_marks DESC) AS row_num
+FROM vw_student_performance</code></pre>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mt-3">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Total Marks</th>
+                                <th>RANK() <small class="fw-normal opacity-75">(gaps in rank)</small></th>
+                                <th>DENSE_RANK() <small class="fw-normal opacity-75">(no gaps)</small></th>
+                                <th>ROW_NUMBER() <small class="fw-normal opacity-75">(always unique)</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in ranking %}
+                            <tr>
+                                <td class="fw-semibold">
+                                    {% if r.rnk == 1 %}🥇
+                                    {% elif r.rnk == 2 %}🥈
+                                    {% elif r.rnk == 3 %}🥉
+                                    {% endif %}
+                                    {{ r.name }}
+                                </td>
+                                <td><span class="fw-bold">{{ r.total_marks }}</span></td>
+                                <td><span class="badge bg-danger px-3 py-2">{{ r.rnk }}</span></td>
+                                <td><span class="badge bg-warning text-dark px-3 py-2">{{ r.dense_rnk }}</span></td>
+                                <td><span class="badge bg-info px-3 py-2">{{ r.row_num }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <h6 class="fw-bold">💡 Difference Explained:</h6>
+                    <ul class="mb-0">
+                        <li><strong>RANK()</strong> — Leaves gaps after ties (1, 1, 3, 4)</li>
+                        <li><strong>DENSE_RANK()</strong> — No gaps after ties (1, 1, 2, 3)</li>
+                        <li><strong>ROW_NUMBER()</strong> — Always unique number (1, 2, 3, 4)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ── TAB 3: CTE ──────────────────────────────────────────── -->
+    <div class="tab-pane fade" id="cte">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">⭐ Top Students (CTE)</span>
+                    <small class="text-muted">Students with avg marks &gt; 70</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>WITH top_students AS (
+    SELECT s.name,
+           ROUND(AVG(m.marks), 2) AS avg_m
+    FROM students s
+    JOIN marks m ON s.student_id = m.student_id
+    GROUP BY s.student_id, s.name
+)
+SELECT * FROM top_students
+WHERE avg_m &gt; 70
+ORDER BY avg_m DESC</code></pre>
+
+                <div class="row mt-3">
+                    {% for c in cte_top %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center py-4">
+                                <div class="avatar-circle-lg mx-auto mb-2">
+                                    {{ c.name[0].upper() }}
+                                </div>
+                                <h5 class="fw-bold">{{ c.name }}</h5>
+                                <span class="badge bg-success px-3 py-2 mb-3">
+                                    ⭐ Avg: {{ c.avg_m }}
+                                </span>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success"
+                                         role="progressbar"
+                                         style="width: {{ c.avg_m }}%;"
+                                         aria-valuenow="{{ c.avg_m }}"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ── TAB 4: SUBQUERY ─────────────────────────────────────── -->
+    <div class="tab-pane fade" id="subquery">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">🔍 Above Average Students</span>
+                    <small class="text-muted">Using Nested Subquery</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT name FROM students
+WHERE student_id IN (
+    SELECT student_id
+    FROM marks
+    GROUP BY student_id
+    HAVING AVG(marks) &gt; 70
+)</code></pre>
+
+                <div class="row mt-3">
+                    {% for s in above_avg %}
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center p-3 bg-light rounded shadow-sm">
+                            <span class="avatar-circle me-3">{{ s.name[0].upper() }}</span>
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ s.name }}</h6>
+                                <small class="text-success">✅ Above Average Performer</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

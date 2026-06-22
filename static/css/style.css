@@ -1,0 +1,728 @@
+/* ============================================================
+   STUDENT MANAGEMENT SYSTEM - style.css
+   Custom CSS (Bootstrap 5 companion)
+   ============================================================ */
+
+
+/* ============================================================
+   SECTION 1: GLOBAL STYLES
+   ============================================================ */
+
+:root {
+    --sidebar-width:      250px;
+    --sidebar-collapsed:  80px;
+    --primary-color:      #1a237e;
+    --secondary-color:    #283593;
+    --accent-color:       #64b5f6;
+    --transition:         all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    overflow-x: hidden;
+}
+
+
+/* ============================================================
+   SECTION 2: WRAPPER LAYOUT
+   ============================================================ */
+
+#wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   SECTION 3: SIDEBAR STYLES
+   ============================================================ */
+
+#sidebar {
+    min-width:    var(--sidebar-width);
+    max-width:    var(--sidebar-width);
+    min-height:   100vh;
+    background:   linear-gradient(
+                      180deg,
+                      var(--primary-color)   0%,
+                      var(--secondary-color) 50%,
+                      #1565c0                100%
+                  );
+    color:        white;
+    transition:   var(--transition);
+    position:     fixed;
+    top:          0;
+    left:         0;
+    z-index:      1000;
+    overflow-y:   auto;
+    overflow-x:   hidden;
+    box-shadow:   4px 0 15px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar.active {
+    min-width: var(--sidebar-collapsed);
+    max-width: var(--sidebar-collapsed);
+}
+
+.sidebar-header {
+    padding:       25px 20px;
+    background:    rgba(0, 0, 0, 0.2);
+    text-align:    center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h3 {
+    font-size:     1.8rem;
+    font-weight:   700;
+    margin-bottom: 5px;
+    color:         white;
+}
+
+.sidebar-header p {
+    font-size:       0.75rem;
+    color:           rgba(255, 255, 255, 0.6);
+    margin:          0;
+    text-transform:  uppercase;
+    letter-spacing:  1px;
+}
+
+#sidebar ul {
+    padding:    15px 0;
+    margin:     0;
+    list-style: none;
+}
+
+#sidebar ul li a {
+    display:         flex;
+    align-items:     center;
+    padding:         14px 20px;
+    color:           rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition:      var(--transition);
+    border-left:     4px solid transparent;
+    font-size:       0.95rem;
+    white-space:     nowrap;
+    overflow:        hidden;
+}
+
+#sidebar ul li a i {
+    font-size:   1.2rem;
+    margin-right: 12px;
+    min-width:   20px;
+    text-align:  center;
+}
+
+#sidebar ul li a:hover {
+    background:        rgba(255, 255, 255, 0.12);
+    color:             white;
+    border-left-color: var(--accent-color);
+    padding-left:      25px;
+}
+
+#sidebar ul li a.active {
+    background:        rgba(255, 255, 255, 0.15);
+    color:             white;
+    border-left-color: var(--accent-color);
+    font-weight:       600;
+}
+
+/* Hide link text when collapsed */
+#sidebar.active ul li a span {
+    display: none;
+}
+
+#sidebar.active ul li a i {
+    margin-right: 0;
+    font-size:    1.4rem;
+}
+
+#sidebar.active .sidebar-header h3 {
+    font-size: 1.2rem;
+}
+
+#sidebar.active .sidebar-header p {
+    display: none;
+}
+
+
+/* ============================================================
+   SECTION 4: MAIN CONTENT STYLES
+   ============================================================ */
+
+#content {
+    margin-left:    var(--sidebar-width);
+    width:          calc(100% - var(--sidebar-width));
+    min-height:     100vh;
+    transition:     var(--transition);
+    display:        flex;
+    flex-direction: column;
+}
+
+#content.active {
+    margin-left: var(--sidebar-collapsed);
+    width:       calc(100% - var(--sidebar-collapsed));
+}
+
+
+/* ============================================================
+   SECTION 5: NAVBAR STYLES
+   ============================================================ */
+
+.navbar {
+    position:      sticky;
+    top:           0;
+    z-index:       999;
+    border-bottom: 1px solid #e0e0e0;
+    background:    white !important;
+    padding:       12px 20px;
+}
+
+.navbar .brand-title {
+    font-size:   1.1rem;
+    font-weight: 600;
+    color:       var(--primary-color);
+}
+
+
+/* ============================================================
+   SECTION 6: STAT CARDS
+   ============================================================ */
+
+.stat-card {
+    border:        none !important;
+    border-radius: 15px !important;
+    transition:    transform 0.3s ease, box-shadow 0.3s ease;
+    overflow:      hidden;
+    cursor:        pointer;
+}
+
+.stat-card:hover {
+    transform:  translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-card .card-body {
+    padding: 25px;
+}
+
+.stat-card h2 {
+    font-size:     2.5rem;
+    font-weight:   700;
+    margin:        5px 0;
+}
+
+.stat-card p {
+    font-size: 0.9rem;
+    opacity:   0.85;
+    margin:    0;
+}
+
+.stat-card i {
+    font-size: 3.5rem;
+    opacity:   0.3;
+}
+
+.stat-card:hover i {
+    animation: pulse 1s infinite;
+}
+
+
+/* ============================================================
+   SECTION 7: GENERAL CARD STYLES
+   ============================================================ */
+
+.card {
+    border:        none !important;
+    border-radius: 12px !important;
+    box-shadow:    0 2px 10px rgba(0, 0, 0, 0.08);
+    animation:     fadeIn 0.4s ease forwards;
+}
+
+.card-header {
+    background:    white !important;
+    border-bottom: 2px solid #f0f2f5;
+    border-radius: 12px 12px 0 0 !important;
+    padding:       15px 20px;
+    font-size:     1rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+
+/* ============================================================
+   SECTION 8: TABLE STYLES
+   ============================================================ */
+
+.table {
+    border-radius: 8px;
+    overflow:      hidden;
+}
+
+.table thead th {
+    font-weight:     600;
+    font-size:       0.85rem;
+    text-transform:  uppercase;
+    letter-spacing:  0.5px;
+    padding:         15px 12px;
+    border:          none;
+}
+
+.table tbody td {
+    padding:          12px;
+    vertical-align:   middle;
+    border-color:     #f0f2f5;
+}
+
+.table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+    transform:        scale(1.001);
+}
+
+
+/* ============================================================
+   SECTION 9: AVATAR CIRCLE STYLES
+   ============================================================ */
+
+.avatar-circle {
+    width:         38px;
+    height:        38px;
+    background:    linear-gradient(135deg, #4e73df, #1a237e);
+    color:         white;
+    border-radius: 50%;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   700;
+    font-size:     0.9rem;
+    flex-shrink:   0;
+    box-shadow:    0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-circle-sm {
+    width:         30px;
+    height:        30px;
+    background:    linear-gradient(135deg, #1cc88a, #0a7a52);
+    color:         white;
+    border-radius: 50%;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   700;
+    font-size:     0.75rem;
+    flex-shrink:   0;
+}
+
+.avatar-circle-lg {
+    width:         60px;
+    height:        60px;
+    background:    linear-gradient(135deg, #4e73df, #1a237e);
+    color:         white;
+    border-radius: 50%;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   700;
+    font-size:     1.5rem;
+    box-shadow:    0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ============================================================
+   SECTION 10: BADGE STYLES
+   ============================================================ */
+
+.badge {
+    font-weight:     500;
+    letter-spacing:  0.3px;
+}
+
+.badge.fs-6 {
+    font-size: 0.85rem !important;
+    padding:   8px 14px;
+}
+
+
+/* ============================================================
+   SECTION 11: BUTTON STYLES
+   ============================================================ */
+
+.btn {
+    border-radius: 8px;
+    font-weight:   500;
+    transition:    var(--transition);
+}
+
+.btn:hover {
+    transform:  translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background:   var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background:   var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-sm {
+    border-radius: 6px;
+    padding:       5px 10px;
+}
+
+
+/* ============================================================
+   SECTION 12: FORM STYLES
+   ============================================================ */
+
+.form-control {
+    border-radius: 8px;
+    border:        1.5px solid #e0e0e0;
+    padding:       10px 15px;
+    transition:    var(--transition);
+    font-size:     0.95rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow:   0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.form-select {
+    border-radius: 8px;
+    border:        1.5px solid #e0e0e0;
+    padding:       10px 15px;
+    transition:    var(--transition);
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow:   0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.form-label {
+    font-weight:   500;
+    color:         #444;
+    margin-bottom: 5px;
+    font-size:     0.9rem;
+}
+
+
+/* ============================================================
+   SECTION 13: PROGRESS BAR STYLES
+   ============================================================ */
+
+.progress {
+    border-radius:    50px;
+    background-color: #e9ecef;
+    overflow:         hidden;
+}
+
+.progress-bar {
+    border-radius: 50px;
+    transition:    width 1s ease;
+    font-size:     0.7rem;
+    font-weight:   600;
+}
+
+
+/* ============================================================
+   SECTION 14: NAV TABS STYLES
+   ============================================================ */
+
+.nav-tabs {
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.nav-tabs .nav-link {
+    border:             none;
+    border-bottom:      3px solid transparent;
+    color:              #666;
+    font-weight:        500;
+    padding:            12px 20px;
+    transition:         var(--transition);
+    border-radius:      0;
+}
+
+.nav-tabs .nav-link:hover {
+    color:               var(--primary-color);
+    border-bottom-color: var(--accent-color);
+    background:          transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color:          var(--primary-color);
+    border-bottom:  3px solid var(--primary-color);
+    background:     transparent;
+    font-weight:    600;
+}
+
+
+/* ============================================================
+   SECTION 15: CODE BLOCK STYLES
+   ============================================================ */
+
+pre {
+    background:    #f8f9fa !important;
+    border:        1px solid #e0e0e0;
+    border-radius: 8px;
+    padding:       15px;
+    font-size:     0.85rem;
+    color:         #333;
+    overflow-x:    auto;
+}
+
+code {
+    color:       #1a237e;
+    font-family: 'Courier New', monospace;
+}
+
+
+/* ============================================================
+   SECTION 16: ALERT STYLES
+   ============================================================ */
+
+.alert {
+    border:        none;
+    border-radius: 10px;
+    padding:       15px 20px;
+    font-weight:   500;
+}
+
+.alert-success {
+    background: rgba(28, 200, 138, 0.15);
+    color:      #0a7a52;
+}
+
+.alert-danger {
+    background: rgba(231, 74, 59, 0.15);
+    color:      #c0392b;
+}
+
+.alert-info {
+    background: rgba(54, 185, 204, 0.15);
+    color:      #1a6c7a;
+}
+
+
+/* ============================================================
+   SECTION 17: MODAL STYLES
+   ============================================================ */
+
+.modal-content {
+    border:        none;
+    border-radius: 15px;
+    box-shadow:    0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
+    padding:       20px 25px;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    border-top: 1px solid #f0f2f5;
+    padding:    15px 25px;
+}
+
+
+/* ============================================================
+   SECTION 18: BREADCRUMB STYLES
+   ============================================================ */
+
+.breadcrumb {
+    background:     transparent;
+    padding:        0;
+    margin-bottom:  20px;
+}
+
+.breadcrumb-item a {
+    color:           var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #888;
+}
+
+
+/* ============================================================
+   SECTION 19: SCROLLBAR STYLES
+   ============================================================ */
+
+::-webkit-scrollbar {
+    width:  6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background:    #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background:    #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+
+/* ============================================================
+   SECTION 20: FOOTER STYLES
+   ============================================================ */
+
+.footer {
+    text-align:  center;
+    padding:     15px;
+    color:       #888;
+    font-size:   0.85rem;
+    border-top:  1px solid #e0e0e0;
+    margin-top:  auto;
+    background:  white;
+}
+
+
+/* ============================================================
+   SECTION 21: RESPONSIVE STYLES
+   ============================================================ */
+
+@media (max-width: 768px) {
+    #sidebar {
+        min-width: var(--sidebar-collapsed);
+        max-width: var(--sidebar-collapsed);
+    }
+
+    #sidebar .sidebar-header p {
+        display: none;
+    }
+
+    #sidebar ul li a span {
+        display: none;
+    }
+
+    #sidebar ul li a i {
+        margin-right: 0;
+    }
+
+    #content {
+        margin-left: var(--sidebar-collapsed);
+        width:       calc(100% - var(--sidebar-collapsed));
+    }
+
+    .stat-card h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #sidebar {
+        min-width: 0;
+        max-width: 0;
+        overflow:  hidden;
+    }
+
+    #content {
+        margin-left: 0;
+        width:       100%;
+    }
+
+    .stat-card {
+        margin-bottom: 10px;
+    }
+}
+
+
+/* ============================================================
+   SECTION 22: ANIMATION STYLES
+   ============================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity:   0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity:   1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-20px);
+        opacity:   0;
+    }
+    to {
+        transform: translateX(0);
+        opacity:   1;
+    }
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.slide-in {
+    animation: slideIn 0.4s ease forwards;
+}
+
+
+/* ============================================================
+   SECTION 23: LOADING AND MISC
+   ============================================================ */
+
+.table-responsive {
+    border-radius: 8px;
+    overflow:      hidden;
+}
+
+.border-start.border-4 {
+    border-width: 4px !important;
+}
+
+img {
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+.text-truncate-custom {
+    max-width:     150px;
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+}
