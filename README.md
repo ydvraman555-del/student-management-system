@@ -305,7 +305,7 @@ This project is open source and available under the **MIT License**.
 ## 👨‍💻 Author
 
 **Your Name**
-GitHub: ydvraman555-del
+GitHub: https://github.com/ydvraman555-del
 
 ---
 
